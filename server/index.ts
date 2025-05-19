@@ -10,10 +10,18 @@ import { getCurrentPlace, updateCurrentPlace } from './api/currentPlace';
 const app: Application = express();
 
 // Правильная настройка CORS
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://f4x1pn2ft.localto.net',
+  'http://d91098wj.beget.tech'
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Разрешаем любой origin при разработке
-    if (!origin || origin === 'http://localhost:3000' || origin === 'https://f4x1pn2ft.localto.net ') {
+    // Разрешаем запросы без origin (например, из Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -28,6 +36,7 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
 
 // Обработка preflight-запросов
 app.options('*', cors());
