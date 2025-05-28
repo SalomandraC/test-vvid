@@ -52,7 +52,7 @@ const updatePreviewData = async (req, res) => {
                 const newDescription = description ?? 'Default Description';
                 const result = await sql `
           INSERT INTO previewdata (title, description)
-          VALUES (${newTitle}, ${newDescription})
+          VALUES ('${newTitle}', '${newDescription}')
           RETURNING title, description
         `;
                 return res.json(result[0]);
@@ -62,7 +62,7 @@ const updatePreviewData = async (req, res) => {
             const newDescription = description !== undefined ? description : currentData[0].description;
             const result = await sql `
         UPDATE previewdata
-        SET title = ${newTitle}, description = ${newDescription}
+        SET title = '${newTitle}', description = '${newDescription}'
         WHERE ctid IN (
           SELECT ctid FROM previewdata LIMIT 1
         )

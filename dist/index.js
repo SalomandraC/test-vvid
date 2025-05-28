@@ -11,12 +11,14 @@ const contestants_1 = require("./api/contestants");
 const previewData_1 = require("./api/previewData");
 const importantData_1 = require("./api/importantData");
 const currentPlace_1 = require("./api/currentPlace");
+const direction_1 = require("./api/direction");
+const importantDates_1 = require("./api/importantDates");
 const app = (0, express_1.default)();
 // Правильная настройка CORS
 const allowedOrigins = [
     'http://localhost:3000',
     'https://f4x1pn2ft.localto.net',
-    'http://d91098wj.beget.tech' // Добавьте ваш production домен
+    'http://d91098wj.beget.tech'
 ];
 app.use((0, cors_1.default)({
     origin: (origin, callback) => {
@@ -44,24 +46,57 @@ app.options('*', (0, cors_1.default)());
 // Middleware
 app.use(express_1.default.json());
 // Роуты
+//___ImportantDates___
+app.get('/importantDates', async (req, res) => {
+    await (0, importantDates_1.getImportantDates)(req, res);
+});
+app.post('/importantDates', async (req, res) => {
+    await (0, importantDates_1.addImportantDate)(req, res);
+});
+app.patch('/importantDates/:id', async (req, res) => {
+    await (0, importantDates_1.updateImportantDate)(req, res);
+});
+app.delete('/importantDates/:id', async (req, res) => {
+    await (0, importantDates_1.deleteImportantDate)(req, res);
+});
+app.patch('/importantDates/reorder', async (req, res) => {
+    await (0, importantDates_1.reorderImportantDates)(req, res);
+});
+//___Contestants___
 app.get('/contestants', (req, res) => (0, contestants_1.getContestants)(req, res));
+//___previewData___
 app.get('/previewData', async (req, res) => {
     await (0, previewData_1.getPreviewData)(req, res);
 });
 app.patch('/previewData', async (req, res) => {
     await (0, previewData_1.updatePreviewData)(req, res);
 });
+//___importantData___
 app.get('/importantData', async (req, res) => {
     await (0, importantData_1.getImportantData)(req, res);
 });
 app.patch('/importantData', async (req, res) => {
     await (0, importantData_1.updateImportantData)(req, res);
 });
+//___currentPlace___
 app.get('/currentPlace', async (req, res) => {
     await (0, currentPlace_1.getCurrentPlace)(req, res);
 });
 app.patch('/currentPlace', async (req, res) => {
     await (0, currentPlace_1.updateCurrentPlace)(req, res);
+});
+//___Directions___
+app.get('/directions', async (req, res) => {
+    await (0, direction_1.getDirection)(req, res);
+});
+app.post('/directions', async (req, res) => {
+    await (0, direction_1.addDirection)(req, res);
+});
+app.patch('/directions/:id', async (req, res) => {
+    await (0, direction_1.updateDirection)(req, res);
+});
+app.delete('/directions/:id', async (req, res) => {
+    await (0, direction_1.deleteDirection)(req, res);
 });
 const PORT = 5000;
 app.listen(PORT, '0.0.0.0', () => {

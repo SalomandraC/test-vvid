@@ -54,14 +54,14 @@ export const updateImportantData = async (req: Request, res: Response) => {
         // Если записей нет — создаём новую
         result = await sql<{ year_data: number }[]>`
           INSERT INTO importantdata (year_data)
-          VALUES (${yearToUpdate})
+          VALUES ('${yearToUpdate}')
           RETURNING year_data
         `;
       } else {
         // Иначе — обновляем существующую
         result = await sql<{ year_data: number }[]>`
           UPDATE importantdata
-          SET year_data = ${yearToUpdate}
+          SET year_data = '${yearToUpdate}'
           WHERE ctid IN (
             SELECT ctid FROM importantdata LIMIT 1
           )
