@@ -6,12 +6,13 @@ import { getContestants } from './api/contestants';
 import { getPreviewData, updatePreviewData } from './api/previewData';
 import { getImportantData, updateImportantData } from './api/importantData';
 import { getCurrentPlace, updateCurrentPlace } from './api/currentPlace';
-import { 
-  getDirection, 
-  addDirection, 
-  updateDirection, 
-  deleteDirection 
+import {
+  getDirection,
+  addDirection,
+  updateDirection,
+  deleteDirection
 } from './api/direction';
+import { register, login } from './api/registration';
 
 import {
   getImportantDates,
@@ -34,7 +35,7 @@ app.use(cors({
   origin: (origin, callback) => {
     // Разрешаем запросы без origin (например, из Postman)
     if (!origin) return callback(null, true);
-    
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -117,7 +118,14 @@ app.delete('/directions/:id', async (req, res) => {
   await deleteDirection(req, res);
 });
 
-
+// Регистрация
+app.post('/register', async (req, res) => {
+  await register(req, res);
+});
+// Вход
+app.post('/login', async (req, res) => {
+  await login(req, res);
+});
 
 const PORT = 5000;
 app.listen(PORT, '0.0.0.0', () => {
