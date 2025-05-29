@@ -40,28 +40,34 @@ exports.getImportantData = getImportantData;
  */
 const updateImportantData = async (req, res) => {
     try {
-        // Начинаем транзакцию
+        const { year_data } = req.body;
+        // Валидация входных данных
+        if (year_data === undefined || year_data === null) {
+            return res.status(400).json({ error: 'year_data is required' });
+        }
+        const yearNumber = Number(year_data);
+        if (isNaN(yearNumber)) {
+            return res.status(400).json({ error: 'year_data must be a number' });
+        }
         await db_1.default.begin(async (sql) => {
-            const { year_data } = req.body;
-            const yearToUpdate = year_data ?? 2025;
-            // Получаем текущую запись с блокировкой для обновления
-            const current = await sql `
+            // Получаем текущую запись с блокировкой
+            const [current] = await sql `
         SELECT year_data FROM importantdata LIMIT 1 FOR UPDATE
       `;
             let result;
-            if (current.length === 0) {
-                // Если записей нет — создаём новую
+            if (!current) {
+                // Создаем новую запись
                 result = await sql `
           INSERT INTO importantdata (year_data)
-          VALUES ('${yearToUpdate}')
+          VALUES (${yearNumber})
           RETURNING year_data
         `;
             }
             else {
-                // Иначе — обновляем существующую
+                // Обновляем существующую
                 result = await sql `
           UPDATE importantdata
-          SET year_data = '${yearToUpdate}'
+          SET year_data = ${yearNumber}
           WHERE ctid IN (
             SELECT ctid FROM importantdata LIMIT 1
           )
