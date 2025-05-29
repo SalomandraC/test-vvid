@@ -33,7 +33,7 @@ const addImportantDate = async (req, res) => {
         const nextPosition = maxPositionResult[0].max + 1;
         const [newDate] = await (0, db_1.default) `
             INSERT INTO importantdates (cur_data, description, position)
-            VALUES (${cur_data}, ${description}, ${nextPosition})
+            VALUES ('${cur_data}', '${description}', '${nextPosition}')
             RETURNING id, cur_data, description, position
         `;
         res.status(201).json(newDate);

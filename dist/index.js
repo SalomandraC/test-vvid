@@ -13,6 +13,8 @@ const importantData_1 = require("./api/importantData");
 const currentPlace_1 = require("./api/currentPlace");
 const direction_1 = require("./api/direction");
 const importantDates_1 = require("./api/importantDates");
+const registration_1 = require("./api/registration");
+const express_session_1 = __importDefault(require("express-session"));
 const app = (0, express_1.default)();
 // Правильная настройка CORS
 const allowedOrigins = [
@@ -20,9 +22,17 @@ const allowedOrigins = [
     'https://f4x1pn2ft.localto.net',
     'http://d91098wj.beget.tech'
 ];
+app.use((0, express_session_1.default)({
+    secret: '111',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
 app.use((0, cors_1.default)({
     origin: (origin, callback) => {
-        // Разрешаем запросы без origin (например, из Postman)
         if (!origin)
             return callback(null, true);
         if (allowedOrigins.includes(origin)) {
@@ -64,6 +74,10 @@ app.patch('/importantDates/reorder', async (req, res) => {
 });
 //___Contestants___
 app.get('/contestants', (req, res) => (0, contestants_1.getContestants)(req, res));
+app.delete('/contestants', contestants_1.deleteAllContestants);
+app.post('/contestants', async (req, res) => {
+    await (0, contestants_1.addContestant)(req, res);
+});
 //___previewData___
 app.get('/previewData', async (req, res) => {
     await (0, previewData_1.getPreviewData)(req, res);
@@ -97,6 +111,19 @@ app.patch('/directions/:id', async (req, res) => {
 });
 app.delete('/directions/:id', async (req, res) => {
     await (0, direction_1.deleteDirection)(req, res);
+});
+// Регистрация
+app.post('/register', async (req, res) => {
+    await (0, registration_1.register)(req, res);
+});
+app.post('/login', async (req, res) => {
+    await (0, registration_1.login)(req, res);
+});
+app.post('/logout', async (req, res) => {
+    await (0, registration_1.logout)(req, res);
+});
+app.get('/checkAuth', async (req, res) => {
+    await (0, registration_1.checkAuth)(req, res);
 });
 const PORT = 5000;
 app.listen(PORT, '0.0.0.0', () => {

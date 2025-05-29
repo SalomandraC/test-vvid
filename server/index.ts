@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express, { Request, Response, Application } from 'express';
 import cors from 'cors';
-import { getContestants } from './api/contestants';
+import { addContestant, deleteAllContestants, getContestants } from './api/contestants';
 import { getPreviewData, updatePreviewData } from './api/previewData';
 import { getImportantData, updateImportantData } from './api/importantData';
 import { getCurrentPlace, updateCurrentPlace } from './api/currentPlace';
@@ -12,7 +12,6 @@ import {
   updateDirection,
   deleteDirection
 } from './api/direction';
-import { register, login } from './api/registration';
 
 import {
   getImportantDates,
@@ -21,6 +20,8 @@ import {
   deleteImportantDate,
   reorderImportantDates
 } from './api/importantDates';
+import { checkAuth, login, logout, register } from './api/registration';
+import session from 'express-session';
 
 const app: Application = express();
 
@@ -31,9 +32,18 @@ const allowedOrigins = [
   'http://d91098wj.beget.tech'
 ];
 
+app.use(session({
+  secret: '111', 
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, 
+    maxAge: 24 * 60 * 60 * 1000 
+  }
+}));
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Разрешаем запросы без origin (например, из Postman)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
@@ -79,6 +89,10 @@ app.patch('/importantDates/reorder', async (req: Request, res: Response) => {
 
 //___Contestants___
 app.get('/contestants', (req: Request, res: Response) => getContestants(req, res));
+app.delete('/contestants', deleteAllContestants); 
+app.post('/contestants', async (req: Request, res: Response) => {
+  await addContestant(req, res);
+}); 
 
 //___previewData___
 app.get('/previewData', async (req, res) => {
@@ -122,9 +136,14 @@ app.delete('/directions/:id', async (req, res) => {
 app.post('/register', async (req, res) => {
   await register(req, res);
 });
-// Вход
 app.post('/login', async (req, res) => {
   await login(req, res);
+});
+app.post('/logout', async (req, res) => {
+  await logout(req, res);
+});
+app.get('/checkAuth', async (req, res) => {
+  await checkAuth(req, res);
 });
 
 const PORT = 5000;

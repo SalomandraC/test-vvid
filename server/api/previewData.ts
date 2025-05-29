@@ -1,6 +1,6 @@
 // server/api/previewData.ts
 import { Request, Response } from 'express';
-import sql from '../config/db'; // ✅ Используем sql вместо Pool
+import sql from '../config/db';
 
 interface IPreviewData {
   title: string;

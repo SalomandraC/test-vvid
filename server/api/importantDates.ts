@@ -36,7 +36,7 @@ export const addImportantDate = async (req: Request, res: Response) => {
 
         const [newDate] = await sql<IImportantDates[]>`
             INSERT INTO importantdates (cur_data, description, position)
-            VALUES (${cur_data}, ${description}, ${nextPosition})
+            VALUES ('${cur_data}', '${description}', '${nextPosition}')
             RETURNING id, cur_data, description, position
         `;
         res.status(201).json(newDate);
